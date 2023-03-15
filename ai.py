@@ -72,10 +72,10 @@ def generate_chat_gpt_messages(user_input):
 
     return [
         {"role": "system", "content":
-         f"Your a {shell} terminal assistant, and your job is to translate natural language instructions to a single roaw, executable {shell} command.\n" +
+         f"You're a {shell} terminal assistant, and your job is to translate natural language instructions to a single raw, executable {shell} command.\n" +
          "It has to be a single command on one line, or multiple commands combined with && (be sure to escape the newline)\n"+
          f"Give a short explanation in {shell} comments before the command. Use the most human-friendly version of the command.\n"+
-         "If you need to use a command that is not available on the system, use a comment to explain what it does.\n" +
+         "If you need to use a command that is not available on the system, explain in a comment what it does and suggest to install it.\n" +
          "If the instruction is not clear, use a comment to ask for clarification.\n"+
          "Use cli tools where possible (such as gh, aws, azure).\n" + 
          f"The user is running {system_info}.\n"+
@@ -118,9 +118,15 @@ def main():
     if len(sys.argv) != 2:
         print("Usage: python ai.py \"<natural language command>\"")
         sys.exit(1)
-    
+
     user_input = sys.argv[1]
 
+    options = []
+
+    # remove flags from the start of the input and add them to the options list
+    while user_input.startswith('-'):
+        option, user_input = user_input.split(' ', 1)
+        options.append(option)
     # Prepend stdin to the user input, if present
     if sys.stdin.isatty():
         pass
@@ -129,12 +135,24 @@ def main():
         if len(stdin):
             user_input = f"{user_input}. Use the following additional context to improve your suggestion:\n\n---\n\n{stdin}\n"
 
+
+    
+
     os.system('')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
+    messages = generate_chat_gpt_messages(user_input)
+
+    if '--debug' in options:
+        # print the role and content of each message if debugging
+        for message in messages:
+            print(f"{color_comment}{message['role']}: {message['content']}{reset}")
+        sys.exit(0)
+
+
+
+
     print(f"{color_comment}🤖 Thinking ...{reset}", end='')
     sys.stdout.flush()
-
-    messages = generate_chat_gpt_messages(user_input)
     bash_command = get_bash_command(messages)
     # Overwrite the "thinking" message
     print(f"\r{' ' * 80}\r", end='')
