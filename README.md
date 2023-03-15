@@ -96,11 +96,62 @@ After adding the function, restart your PowerShell session or run `. $profile`.
 
 To use the AI Terminal Assistant, type the `ai` command followed by your natural language instruction:
 
-```powershell
-ai list all files in the current directory
+```shell
+$ ai list all files in the current directory
 ```
 
 The AI Terminal Assistant will generate a shell command based on your instruction and automatically type it into your terminal.
+
+You can also pipe additional context to the AI through the use of stdin, for example:
+
+```shell
+$ ls | ai organize these files semantically
+🤖
+  # Based on the file names, I suggest the following directory structure:
+  mkdir Documents Media Pictures Programs
+  mkdir Documents/Work Documents/Personal
+  mkdir Media/Movies Media/TV\ Shows Media/Videos Media/Music
+  mkdir Pictures/Family Pictures/Vacation Pictures/Wedding
+  mkdir Programs/Installers Programs/Cracks Programs/Extensions
+  # Then, move each file to its appropriate directory.
+  mv Resume.pdf Documents/Work/
+  mv Data_Analysis_Report.docx Documents/Work/
+  mv Python_Tutorial.pdf Documents/Work/
+  mv Tax_Return_2022.pdf Documents/Personal/
+  mv Webinar_Slides.pptx Documents/Work/
+  mv Invoice_12345.pdf Documents/Work/
+  mv Birthday_Party_Invite.docx Documents/Personal/
+  mv eBook_Title.epub Documents/Personal/
+  mv Mobile_App_Prototype.sketch Documents/Work/
+  mv Unsorted_Notes.txt Documents/Work/
+  mv Budget_Spreadsheet.xlsx Documents/Work/
+  mv Business_Proposal.docx Documents/Work/
+  mv House_Plans.pdf Documents/Personal/
+  mv Financial_Statement_Q3.pdf Documents/Work/
+  mv Movie_Title_720p.mkv Media/Movies/
+  mv TV_Show_S01E01.mkv Media/TV\ Shows/
+  mv Cat_Video.mp4 Media/Videos/
+  mv Travel_Vlog.mp4 Media/Videos/
+  mv Music_Album.zip Media/Music/
+  mv Article_Title.pdf Pictures/
+  mv Family_Reunion.jpg Pictures/Family/
+  mv Vacation_Photos.zip Pictures/Vacation/
+  mv Wedding_Photos.tar.gz Pictures/Wedding/
+  mv Desktop_Wallpaper.png Pictures/
+  mv Game_Title_Setup.exe Programs/Installers/
+  mv setup_software.exe Programs/Installers/
+  mv Browser_Setup.dmg Programs/Installers/
+  mv Software_Crack.zip Programs/Cracks/
+  mv Browser_Extension.crx Programs/Extensions/
+  # I'm assuming that random_file.tmp is not important, so it can be deleted.
+  rm random_file.tmp
+
+$ mkdir Documents && \
+> mv Resume.pdf Data_Analysis_Report.docx Python_Tutorial.pdf Tax_Return_2022.pdf \Webinar_Slides.pptx eBook_Title.epub Article_Title.pdf Business_Proposal.docx \House_Plans.pdf Financial_Statement_Q3.pdf Budget_Spreadsheet.xlsx Documents/ && \
+> mkdir Photos && \
+> mv Vacation_Photos.zip Family_Reunion.jpg Wedding_Photos.tar.gz Photos/ && \
+> mkdir Videos && \
+```
 
 ## Contributing
 

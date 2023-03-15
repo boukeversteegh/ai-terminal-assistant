@@ -1,4 +1,5 @@
 import io
+import re
 import openai
 import os
 import sys
@@ -72,8 +73,7 @@ def generate_chat_gpt_messages(user_input):
     return [
         {"role": "system", "content":
          f"Your a {shell} terminal assistant, and your job is to translate natural language instructions to a single roaw, executable {shell} command.\n" +
-         #"Do not include any extra characters, brackets, or quotes in your response (e.g. 'ls', not `ls` or ['ls']).\n" +
-         "It has to be a single command, but can be multiple lines, as long as the line endings are properly escaped).\n"+
+         "It has to be a single command on one line, or multiple commands combined with && (be sure to escape the newline)\n"+
          f"Give a short explanation in {shell} comments before the command. Use the most human-friendly version of the command.\n"+
          "If you need to use a command that is not available on the system, use a comment to explain what it does.\n" +
          "If the instruction is not clear, use a comment to ask for clarification.\n"+
@@ -95,7 +95,7 @@ def get_bash_command(messages):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages,
-        max_tokens=300,
+        max_tokens=1000,
         n=1,
         stop=None,
         temperature=0.7,
@@ -112,6 +112,7 @@ yellow = "\033[93m"
 dark_green = "\033[32m"
 reset = "\033[0m"
 color_comment = dark_green
+color_command = yellow
 
 def main():
     if len(sys.argv) != 2:
@@ -126,7 +127,7 @@ def main():
     else:
         stdin = sys.stdin.read().strip()
         if len(stdin):
-            user_input = f"Given the following stdin:\n{stdin}\n---\n{user_input}"
+            user_input = f"{user_input}. Use the following additional context to improve your suggestion:\n\n---\n\n{stdin}\n"
 
     os.system('')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
@@ -138,22 +139,35 @@ def main():
     # Overwrite the "thinking" message
     print(f"\r{' ' * 80}\r", end='')
     os.system('')
-    print('🤖 ', end='')
-    executable_commands = []
-    for line in bash_command.splitlines():  
+    print('🤖')
+
+    # Get all lines that are not comments    
+    def normalize_command(command):
+        return re.sub(r'\s*&& \\\s*$', '', command.strip(';').strip())
+    
+    executable_commands = [normalize_command(command) for command in bash_command.splitlines() if not command.startswith('#') and len(normalize_command(command))]
+
+    for line in bash_command.splitlines():
+        if len(line.strip()) == 0:
+            continue
+
+        # Print out any comments in yellow
         if line.startswith('#'):
-            # Print out any comments in yellow
-            comment = textwrap.fill(line.lstrip('#').strip(), width=80)
+            comment = textwrap.fill(line, width=80, initial_indent='  ', subsequent_indent='  ')
             print(f"{color_comment}{comment}{reset}")
-        elif len(line):
-            executable_commands.append(line.strip(';'))
+        # Print out the executable command in yellow, if there are multiple commands
+        elif len(line) and len(executable_commands)>1:
+            print(f"  {color_command}{line}{reset}")
 
     sys.stdout.flush()
 
     # print(executable_commands)
 
-    # Simulate typing the executable commands, separated by ;
-    pyautogui.typewrite(";".join(executable_commands))
+    # Simulate typing the executable commands, with index
+    for command_index, command in enumerate(executable_commands):
+        pyautogui.typewrite(command)
+        if command_index < len(executable_commands) - 1 and not command.endswith('\\'):
+            pyautogui.typewrite(" && \\\n")
 
 if __name__ == "__main__":
     main()
