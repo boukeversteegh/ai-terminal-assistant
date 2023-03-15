@@ -1,3 +1,4 @@
+import io
 import openai
 import os
 import sys
@@ -120,6 +121,7 @@ def main():
     user_input = sys.argv[1]
 
     os.system('')
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
     print(f"{color_comment}🤖 Thinking ...{reset}", end='')
     sys.stdout.flush()
 
