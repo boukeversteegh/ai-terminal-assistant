@@ -106,11 +106,12 @@ We welcome contributions from the community! Whether it's bug fixes, improvement
 
 Here are some ways you can contribute:
 
-    Report bugs and issues
-    Suggest improvements or new features
-    Contribute to the codebase by fixing bugs or implementing new features
-    Help with testing and documentation
-    Share your feedback and experiences using the AI Terminal Assistant
+- Report bugs and issues
+
+- Suggest improvements or new features
+- Contribute to the codebase by fixing bugs or implementing new features
+- Help with testing and documentation
+- Share your feedback and experiences using the AI Terminal Assistant
 
 ## Limitations
 
