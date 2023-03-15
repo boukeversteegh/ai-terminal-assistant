@@ -11,10 +11,27 @@ import shutil
 import time
 import pyautogui
 
+# =============================================================================
+# CONFIGURATION
+# =============================================================================
+
 # Set up OpenAI API
 openai.api_key = os.environ.get("OPENAI_API_KEY")
 
-# Get System Information
+# Define the keyboard controller
+kbd = Controller()
+
+# Define ANSI colors
+yellow = "\033[93m"
+dark_green = "\033[32m"
+reset = "\033[0m"
+color_comment = dark_green
+color_command = yellow
+
+# =============================================================================
+# HELPER FUNCTIONS
+# =============================================================================
+
 def get_system_info():
     os_name = os.name
     platform_system = platform.system()
@@ -62,7 +79,10 @@ def get_package_managers():
 def sudo_available():
     return shutil.which("sudo") is not None
 
-# Define a function to generate the prompt
+# =============================================================================
+# CHATGPT FUNCTIONS
+# =============================================================================
+
 def generate_chat_gpt_messages(user_input):
     system_info = get_system_info()
     shell = get_shell()
@@ -84,13 +104,13 @@ def generate_chat_gpt_messages(user_input):
          f"The user has {'sudo' if sudo else 'no'} sudo access.\n"
          },
         {"role": "user", "content": "list files"},
-        {"role": "assistant", "content": "# Show all files (including hidden ones) in the current directory.\nls -lah"},
+        {"role": "assistant",
+        "content": "# Show all files (including hidden ones) in the current directory.\nls -lah"},
         {"role": "user", "content": "play a game with me"},
         {"role": "assistant", "content": f"# I'm sorry, but I can only provide you with {shell} commands. I can't play games with you."},
         {"role": "user", "content": user_input},
     ]
 
-# Define a function to make a request to ChatGPT 3.5-turbo and parse the response
 def get_bash_command(messages):
     response = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -104,15 +124,9 @@ def get_bash_command(messages):
     bash_command = response['choices'][0]['message']['content'].strip()
     return bash_command
 
-# Define the keyboard controller
-kbd = Controller()
-
-# Define ansi colors
-yellow = "\033[93m"
-dark_green = "\033[32m"
-reset = "\033[0m"
-color_comment = dark_green
-color_command = yellow
+# =============================================================================
+# MAIN FUNCTION
+# =============================================================================
 
 def main():
     if len(sys.argv) != 2:
@@ -178,8 +192,6 @@ def main():
             print(f"  {color_command}{line}{reset}")
 
     sys.stdout.flush()
-
-    # print(executable_commands)
 
     # Simulate typing the executable commands, with index
     for command_index, command in enumerate(executable_commands):
