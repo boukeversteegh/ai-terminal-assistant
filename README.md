@@ -7,7 +7,40 @@ AI Terminal Assistant is a command-line tool that allows you to interact with yo
 - Translate natural language instructions into Bash or PowerShell commands
 - Provide human-friendly explanations in the form of comments
 - Automatically type the generated commands into the terminal
+- You can edit the command before executing, or cancel with ctrl+c
+- Suggested commands fully integrated in the terminal, bash expansion, history, pipes, etcetera
 - Cross-platform support for Bash and PowerShell
+
+## Examples
+
+### Bash
+
+```bash
+$ ai find files containing the text hello world
+# 🤖 Search for files containing the text "hello world" recursively in the current directory.
+$ grep -rli "hello world" .
+```
+
+```bash
+$ ai list files by size
+# 🤖 List all files in the current directory sorted by size (largest to smallest).
+$ ls -lS
+```
+
+```bash
+$ ai compress all png files in the current directory
+# 🤖 Compress all PNG files in the current directory using tar and gzip.
+$ tar -czf png_files.tar.gz *.png
+```
+
+### PowerShell
+
+```powershell
+PS C:\Users\Anonymous> ai how much free disk space in mb?
+# 🤖 Display the amount of free disk space in MB for the C: drive.
+PS C:\Users\Anonymous> (Get-PSDrive -PSProvider 'FileSystem').Free/1MB
+6379.5546875
+```
 
 ## Setup
 
@@ -68,37 +101,6 @@ ai list all files in the current directory
 ```
 
 The AI Terminal Assistant will generate a shell command based on your instruction and automatically type it into your terminal.
-
-## Examples
-
-### Bash
-
-```bash
-$ ai find files containing the text hello world
-# 🤖 Search for files containing the text "hello world" recursively in the current directory.
-$ grep -rli "hello world" .
-```
-
-```bash
-$ ai list files by size
-# 🤖 List all files in the current directory sorted by size (largest to smallest).
-$ ls -lS
-```
-
-```bash
-$ ai compress all png files in the current directory
-# 🤖 Compress all PNG files in the current directory using tar and gzip.
-$ tar -czf png_files.tar.gz *.png
-```
-
-### PowerShell
-
-```powershell
-PS C:\Users\Anonymous> ai how much free disk space in mb?
-# 🤖 Display the amount of free disk space in MB for the C: drive.
-PS C:\Users\Anonymous> (Get-PSDrive -PSProvider 'FileSystem').Free/1MB
-6379.5546875
-```
 
 ## Contributing
 
