@@ -1,4 +1,4 @@
-# AI Terminal Assistant
+# 🤖 AI Terminal Assistant
 
 AI Terminal Assistant is a command-line tool that allows you to interact with your terminal using natural language. It leverages the power of OpenAI's GPT-3.5-turbo model to convert your natural language instructions into shell commands for Bash and PowerShell.
 
