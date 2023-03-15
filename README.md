@@ -13,30 +13,26 @@ AI Terminal Assistant is a command-line tool that allows you to interact with yo
 
 1. Clone the repository:
 
-```
-bash
+```bash
 git clone https://github.com/boukeversteegh/ai-terminal-assistant.git
 cd ai-terminal-assistant
 ```
 
 1. Install the required dependencies:
 
-```
-bash
+```bash
 pip install -r requirements.txt
 ```
 
 1. Set up your OpenAI API key as an environment variable:
 
-```
-bash
+```bash
 export OPENAI_API_KEY="your_api_key_here"
 ```
 
 For PowerShell, use the following command:
 
-```
-powershell
+```powershell
 $env:OPENAI_API_KEY = "your_api_key_here"
 ```
 
@@ -44,8 +40,7 @@ $env:OPENAI_API_KEY = "your_api_key_here"
 
 To set up the AI Terminal Assistant alias for Bash, add the following function to your `.bashrc` or `.bash_profile` file:
 
-```
-bash
+```bash
 function ai() {
   python /path/to/ai-terminal-assistant/ai.py "$*"
 }
@@ -59,8 +54,7 @@ After adding the function, restart your terminal or run `source ~/.bashrc` (or `
 
 To set up the AI Terminal Assistant alias for PowerShell, add the following function to your PowerShell profile:
 
-```
-powershell
+```powershell
 function ai {
   python C:\path\to\ai-terminal-assistant\ai.py ($args -join ' ')
 }
@@ -74,8 +68,7 @@ After adding the function, restart your PowerShell session or run `. $profile`.
 
 To use the AI Terminal Assistant, type the `ai` command followed by your natural language instruction:
 
-```
-bash
+```powershell
 ai list all files in the current directory
 ```
 
@@ -85,19 +78,19 @@ The AI Terminal Assistant will generate a shell command based on your instructio
 
 ### Bash
 
-```shell
+```bash
 $ ai find files containing the text hello world
 # 🤖 Search for files containing the text "hello world" recursively in the current directory.
 $ grep -rli "hello world" .
 ```
 
-```shell
+```bash
 $ ai list files by size
 # 🤖 List all files in the current directory sorted by size (largest to smallest).
 $ ls -lS
 ```
 
-```shell
+```bash
 $ ai compress all png files in the current directory
 # 🤖 Compress all PNG files in the current directory using tar and gzip.
 $ tar -czf png_files.tar.gz *.png
