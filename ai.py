@@ -120,6 +120,14 @@ def main():
     
     user_input = sys.argv[1]
 
+    # Prepend stdin to the user input, if present
+    if sys.stdin.isatty():
+        pass
+    else:
+        stdin = sys.stdin.read().strip()
+        if len(stdin):
+            user_input = f"Given the following stdin:\n{stdin}\n---\n{user_input}"
+
     os.system('')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
     print(f"{color_comment}🤖 Thinking ...{reset}", end='')
