@@ -12,29 +12,24 @@ AI Terminal Assistant is a command-line tool that allows you to interact with yo
 ## Setup
 
 1. Clone the repository:
-
-```bash
-git clone https://github.com/boukeversteegh/ai-terminal-assistant.git
-cd ai-terminal-assistant
-```
-
+    ```bash
+    git clone https://github.com/boukeversteegh/ai-terminal-assistant.git
+    cd ai-terminal-assistant
+    ```
 1. Install the required dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
+    ```bash
+    pip install -r requirements.txt
+    ```
 1. Set up your OpenAI API key as an environment variable:
+    ```bash
+    export OPENAI_API_KEY="your_api_key_here"
+    ```
 
-```bash
-export OPENAI_API_KEY="your_api_key_here"
-```
+    For PowerShell, use the following command:
 
-For PowerShell, use the following command:
-
-```powershell
-$env:OPENAI_API_KEY = "your_api_key_here"
-```
+    ```powershell
+    $env:OPENAI_API_KEY = "your_api_key_here"
+    ```
 
 ### Bash
 
