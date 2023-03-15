@@ -5,6 +5,7 @@ from pynput.keyboard import Controller
 import textwrap
 import psutil
 import platform
+import shutil
 
 # Set up OpenAI API
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -23,10 +24,43 @@ def get_shell():
     parent_process = psutil.Process(os.getppid())
     return parent_process.name().lower().replace(".exe", "")
 
+def get_working_directory():
+    return os.getcwd()
+
+def get_last_commands():
+    return os.popen('history').read()
+
+def get_package_managers():
+    package_managers = [
+        "pip",
+        "conda",
+        "npm",
+        "yarn",
+        "gem",
+        "apt",
+        "dnf",
+        "yum",
+        "pacman",
+        "zypper",
+        "brew",
+        "choco",
+        "scoop",
+    ]
+
+    installed_package_managers = []
+
+    for pm in package_managers:
+        if shutil.which(pm):
+            installed_package_managers.append(pm)
+
+    return installed_package_managers
+
 # Define a function to generate the prompt
 def generate_chat_gpt_messages(user_input):
     system_info = get_system_info()
     shell = get_shell()
+    working_directory = get_working_directory()
+    package_managers = get_package_managers()
 
     return [
         {"role": "system", "content":
@@ -36,7 +70,10 @@ def generate_chat_gpt_messages(user_input):
          "If you need to use a command that is not available on the system, use a comment to explain what it does.\n" +
          "If the instruction is not clear, use a comment to ask for clarification.\n"+
          "Use cli tools where possible (such as gh, aws, azure).\n" + 
-         f"The user is running {system_info}.\n"},
+         f"The user is running {system_info}.\n"+
+         f"The user is in the {working_directory} directory.\n" +
+         f"The following package managers are installed: {', '.join(package_managers)}.\n"
+         },
         {"role": "user", "content": "list files"},
         {"role": "assistant", "content": "# Show all files (including hidden ones) in the current directory.\nls -lah"},
         {"role": "user", "content": "play a game with me"},

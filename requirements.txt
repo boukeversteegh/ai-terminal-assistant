@@ -1,0 +1,4 @@
+openai==0.27
+pynput
+psutil
+pyautogui
