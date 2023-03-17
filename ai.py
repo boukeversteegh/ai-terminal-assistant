@@ -39,7 +39,9 @@ def get_system_info():
     platform_version = platform.version()
     platform_machine = platform.machine()
     platform_processor = platform.processor()
-    return f"{os_name} {platform_system} {platform_release} {platform_version} {platform_machine} {platform_processor}"
+    platform_wsl = os.environ.get('WSL_DISTRO_NAME') is not None
+
+    return f"{os_name} {platform_system} {platform_release} {platform_version} {platform_machine} {platform_processor} wsl:{platform_wsl}"
 
 def get_shell():
     parent_process = psutil.Process(os.getppid())
