@@ -32,6 +32,7 @@ color_command = yellow
 # HELPER FUNCTIONS
 # =============================================================================
 
+
 def get_system_info():
     os_name = os.name
     platform_system = platform.system()
@@ -43,15 +44,19 @@ def get_system_info():
 
     return f"{os_name} {platform_system} {platform_release} {platform_version} {platform_machine} {platform_processor} wsl:{platform_wsl}"
 
+
 def get_shell():
     parent_process = psutil.Process(os.getppid())
     return parent_process.name().lower().replace(".exe", "")
 
+
 def get_working_directory():
     return os.getcwd()
 
+
 def get_last_commands():
     return os.popen('history').read()
+
 
 def get_package_managers():
     package_managers = [
@@ -78,12 +83,14 @@ def get_package_managers():
 
     return installed_package_managers
 
+
 def sudo_available():
     return shutil.which("sudo") is not None
 
 # =============================================================================
 # CHATGPT FUNCTIONS
 # =============================================================================
+
 
 def generate_chat_gpt_messages(user_input):
     system_info = get_system_info()
@@ -95,23 +102,24 @@ def generate_chat_gpt_messages(user_input):
     return [
         {"role": "system", "content":
          f"You're a {shell} terminal assistant, and your job is to translate natural language instructions to a single raw, executable {shell} command.\n" +
-         "It has to be a single command on one line, or multiple commands combined with && (be sure to escape the newline)\n"+
-         f"Give a short explanation in {shell} comments before the command. Use the most human-friendly version of the command.\n"+
+         "It has to be a single command on one line, or multiple commands combined with && (be sure to escape the newline)\n" +
+         f"Give a short explanation in {shell} comments before the command. Use the most human-friendly version of the command.\n" +
          "If you need to use a command that is not available on the system, explain in a comment what it does and suggest to install it.\n" +
-         "If the instruction is not clear, use a comment to ask for clarification.\n"+
-         "Use cli tools where possible (such as gh, aws, azure).\n" + 
-         f"The user is running {system_info}.\n"+
+         "If the instruction is not clear, use a comment to ask for clarification.\n" +
+         "Use cli tools where possible (such as gh, aws, azure).\n" +
+         f"The user is running {system_info}.\n" +
          f"The user is in the {working_directory} directory.\n" +
          f"If installing a package is required, use one of the following managers: {', '.join(package_managers)}. These are already installed for this user.\n" +
          f"The user has {'sudo' if sudo else 'no'} sudo access.\n"
          },
         {"role": "user", "content": "list files"},
         {"role": "assistant",
-        "content": "# Show all files (including hidden ones) in the current directory.\nls -lah"},
+         "content": "# Show all files (including hidden ones) in the current directory.\nls -lah"},
         {"role": "user", "content": "play a game with me"},
         {"role": "assistant", "content": f"# I'm sorry, but I can only provide you with {shell} commands. I can't play games with you."},
         {"role": "user", "content": user_input},
     ]
+
 
 def get_bash_command(messages):
     response = openai.ChatCompletion.create(
@@ -129,6 +137,7 @@ def get_bash_command(messages):
 # =============================================================================
 # MAIN FUNCTION
 # =============================================================================
+
 
 def main():
     if len(sys.argv) != 2:
@@ -151,9 +160,6 @@ def main():
         if len(stdin):
             user_input = f"{user_input}. Use the following additional context to improve your suggestion:\n\n---\n\n{stdin}\n"
 
-
-    
-
     os.system('')
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf8')
     messages = generate_chat_gpt_messages(user_input)
@@ -161,11 +167,9 @@ def main():
     if '--debug' in options:
         # print the role and content of each message if debugging
         for message in messages:
-            print(f"{color_comment}{message['role']}: {message['content']}{reset}")
+            print(
+                f"{color_comment}{message['role']}: {message['content']}{reset}")
         sys.exit(0)
-
-
-
 
     print(f"{color_comment}🤖 Thinking ...{reset}", end='')
     sys.stdout.flush()
@@ -175,11 +179,12 @@ def main():
     os.system('')
     print('🤖')
 
-    # Get all lines that are not comments    
+    # Get all lines that are not comments
     def normalize_command(command):
         return re.sub(r'\s*&& \\\s*$', '', command.strip(';').strip())
-    
-    executable_commands = [normalize_command(command) for command in bash_command.splitlines() if not command.startswith('#') and len(normalize_command(command))]
+
+    executable_commands = [normalize_command(command) for command in bash_command.splitlines(
+    ) if not command.startswith('#') and len(normalize_command(command))]
 
     for line in bash_command.splitlines():
         if len(line.strip()) == 0:
@@ -187,10 +192,11 @@ def main():
 
         # Print out any comments in yellow
         if line.startswith('#'):
-            comment = textwrap.fill(line, width=80, initial_indent='  ', subsequent_indent='  ')
+            comment = textwrap.fill(
+                line, width=80, initial_indent='  ', subsequent_indent='  ')
             print(f"{color_comment}{comment}{reset}")
         # Print out the executable command in yellow, if there are multiple commands
-        elif len(line) and len(executable_commands)>1:
+        elif len(line) and len(executable_commands) > 1:
             print(f"  {color_command}{line}{reset}")
 
     sys.stdout.flush()
@@ -200,6 +206,7 @@ def main():
         pyautogui.typewrite(command)
         if command_index < len(executable_commands) - 1 and not command.endswith('\\'):
             pyautogui.typewrite(" && \\\n")
+
 
 if __name__ == "__main__":
     main()
