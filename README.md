@@ -64,28 +64,10 @@ PS C:\Users\Anonymous> (Get-PSDrive -PSProvider 'FileSystem').Free/1MB
     $env:OPENAI_API_KEY = "your_api_key_here"
     ```
 
-### Bash
+### Set up the `ai` alias
 
-To set up the AI Terminal Assistant alias for Bash, add the following function to your `.bashrc` or `.bash_profile` file:
-
-```bash
-function ai() {
-  python /path/to/ai-terminal-assistant/ai.py "$*"
-}
-```
-
-Replace `/path/to/ai-terminal-assistant` with the actual path to the `ai-terminal-assistant` folder.
-
-After adding the function, restart your terminal or run `source ~/.bashrc` (or `source ~/.bash_profile`).
-
-### PowerShell
-
-To set up the AI Terminal Assistant alias for PowerShell, add the following function to your PowerShell profile:
-
-```powershell
-function ai {
-  python C:\path\to\ai-terminal-assistant\ai.py ($args -join ' ')
-}
+```shell
+python install.py
 ```
 
 Replace `C:\path\to\ai-terminal-assistant` with the actual path to the `ai-terminal-assistant` folder.

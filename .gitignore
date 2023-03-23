@@ -3,4 +3,6 @@
 !README.md
 !requirements.txt
 !setup/
+!setup/*
 !.gitignore
+!install.py
