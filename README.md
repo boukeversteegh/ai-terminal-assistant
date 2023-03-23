@@ -70,9 +70,7 @@ PS C:\Users\Anonymous> (Get-PSDrive -PSProvider 'FileSystem').Free/1MB
 python install.py
 ```
 
-Replace `C:\path\to\ai-terminal-assistant` with the actual path to the `ai-terminal-assistant` folder.
-
-After adding the function, restart your PowerShell session or run `. $profile`.
+Restart your terminal to use the `ai` alias.
 
 ## Usage
 
