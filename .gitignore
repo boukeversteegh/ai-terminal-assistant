@@ -6,3 +6,4 @@
 !setup/*
 !.gitignore
 !install.py
+!prompts.yaml

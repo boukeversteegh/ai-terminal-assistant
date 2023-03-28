@@ -3,6 +3,8 @@ import re
 import openai
 import os
 import sys
+
+import yaml
 from pynput.keyboard import Controller
 import textwrap
 import psutil
@@ -61,6 +63,8 @@ def get_shell():
 def get_shell_version(shell):
     if shell == "powershell":
         return os.popen("powershell -Command $PSVersionTable.PSVersion").read()
+    elif shell == "bash":
+        return os.popen(f"{shell} --version").read().splitlines()[0]
     else:
         return os.popen(f"{shell} --version").read()
 
@@ -115,34 +119,30 @@ def generate_chat_gpt_messages(user_input):
     package_managers = get_package_managers()
     sudo = sudo_available()
 
-    example = "# Show all files (including hidden ones) in the current directory.\nls -lah\n"
-    if shell == "powershell":
-        example = "# Show all files and folders in the current directory (including hidden ones).\nGet-ChildItem"
 
-    return [
-        {"role": "system", "content":
-         f"You're a {shell} terminal assistant, and your job is to translate natural language instructions to a single raw, executable {shell} command.\n" +
-         "It has to be a single command on one line, or multiple commands spread out over multiple lines (without separators like ; or &&)\n" +
-         f"The shell is {shell} {shell_version}.\n"
-         f"Give a short explanation in {shell} comments before the command. Use the most human-friendly version of the command.\n" +
-         "If you need to use a command that is not available on the system, explain in a comment what it does and suggest to install it.\n" +
-         "If the instruction is not clear, use a comment to ask for clarification.\n" +
-         "If you need to output a literal string that the user needs to write, which isn't a command or comment, prefix it with #> .\n" +
-         "Use cli tools where possible (such as gh, aws, azure).\n" +
-         f"The shell is running on the following system:\n" +
-         f"{system_info}.\n" +
-         f"The user is in the {working_directory} directory.\n" +
-         f"If installing a package is required, use one of the following managers: {', '.join(package_managers)}. These are already installed for this user.\n" +
-         f"The user has {'sudo' if sudo else 'no'} sudo access.\n"
-         },
-        {"role": "user", "content": "list files"},
-        {"role": "assistant", "content": example},
-        {"role": "user", "content": "play a game with me"},
-        {"role": "assistant", "content": f"# I'm sorry, but I can only provide you with {shell} commands. I can't play games with you."},
-        # {"role": "user", "content": "show me how to add a host name alias for my local ip address"},
-        # {"role": "assistant", "content": f"# To add a host name for your local ip, open the hosts file /etc/hosts and add a line as follows\n# 127.0.0.1 youralias.\ncode /etc/hosts"},
-        {"role": "user", "content": user_input},
-    ]
+    prompts = yaml.load(open('prompts.yaml'), Loader=yaml.FullLoader)
+
+    shell_messages = prompts['bash']['messages']
+    if shell == "powershell":
+        shell_messages = prompts['powershell']['messages']
+
+    common_messages = prompts['common']['messages']
+
+    # replace parameters in each message content
+    for message in common_messages:
+        message['content'] = message['content'].format(
+            shell=shell,
+            shell_version=shell_version,
+            system_info=system_info,
+            working_directory=working_directory,
+            package_managers=', '.join(package_managers),
+            sudo='sudo' if sudo else 'no sudo',
+        )
+    user_message = {
+        "role": "user",
+        "content": user_input,
+    }
+    return common_messages + shell_messages + [user_message]
 
 
 def get_bash_command(messages):
