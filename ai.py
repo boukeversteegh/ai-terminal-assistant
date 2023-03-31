@@ -119,8 +119,11 @@ def generate_chat_gpt_messages(user_input):
     package_managers = get_package_managers()
     sudo = sudo_available()
 
-
-    prompts = yaml.load(open('prompts.yaml'), Loader=yaml.FullLoader)
+    # open prompts relative to this file
+    prompts = yaml.load(
+        open(os.path.join(os.path.dirname(__file__), "prompts.yaml"), "r"),
+        Loader=yaml.FullLoader
+    )
 
     shell_messages = prompts['bash']['messages']
     if shell == "powershell":
